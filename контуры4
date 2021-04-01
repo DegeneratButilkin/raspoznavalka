@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import math
 
+# Возвращает повёрнутое изображение (матрицу) на угол "angle"
 def rotate_image(mat, angle):
     height, width = mat.shape[:2]
     image_center = (width / 2, height / 2)
@@ -20,7 +21,7 @@ def rotate_image(mat, angle):
     rotated_mat = cv2.warpAffine(mat, rotation_mat, (bound_w, bound_h))
     return rotated_mat
 
-# возвращает вложенный массив
+# сортирует контруры, возвращает вложенный массив, табличное представление
 # [[((x,y),(w,h),angle)),((x,y),(w,h),angle)),...],[((x,y),(w,h),angle)),((x,y),(w,h),angle)),...],]
 def сортировка_контуров(контуры):
     контуры2 = контуры.copy()
@@ -42,7 +43,7 @@ def сортировка_контуров(контуры):
         таблицаЯчеек.append(строкаКонтуров)
     return таблицаЯчеек
             
-            
+# обрезает нужную строчку под номером "n" (счёт сверху вниз) и показывает         
 def показать_строку(таблицаТочек,n):
     строка = таблицаТочек[n-1]
 
@@ -82,15 +83,15 @@ def показать_строку(таблицаТочек,n):
         
 
 image_file = "3.5.png"
-img = cv2.imread(image_file)
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-ret, thresh = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)
-img_erode = cv2.erode(thresh, np.ones((3, 3), np.uint8), iterations=1)
+img = cv2.imread(image_file)       #чтение изображение в img
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)     # конвертирование в оттенки серого результат в "gray"
+ret, thresh = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY) # пороговое осветление (все пиксели ярче 20 становятся белыми (255)) результат в "trash"
+img_erode = cv2.erode(thresh, np.ones((3, 3), np.uint8), iterations=1) # эрозия)) - каждый чёрный пиксель закрашивает соседние вокруг себя
 
-# Get contours
+# поиск контуров в "contours" изображение контуров, а в "hierarhy" иерархия (инф о вложенности контуров)
 contours, hierarchy = cv2.findContours(img_erode, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-output = img.copy()
+output = img.copy() # копирование входного изображение чтобы потом наложить на него контуры
 
 cnt = contours[1]
 ell = cv2.fitEllipse(cnt)
