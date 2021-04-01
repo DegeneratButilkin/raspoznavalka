@@ -93,16 +93,18 @@ contours, hierarchy = cv2.findContours(img_erode, cv2.RETR_TREE, cv2.CHAIN_APPRO
 
 output = img.copy() # копирование входного изображение чтобы потом наложить на него контуры
 
-cnt = contours[1]
-ell = cv2.fitEllipse(cnt)
-angle = ell[2]
+cnt = contours[1] # самый большой контур копировать в cnt
+ell = cv2.fitEllipse(cnt) # нахождение эллипса из контура
+angle = ell[2] # угол поворота этого эллипса 
 #print(angle)
-rotimg = rotate_image(img, angle-90)
-cv2.imshow("rotate", rotimg)
-roterode = rotate_image(img_erode, angle-90)
+rotimg = rotate_image(img, angle-90) # поворачивает изначсальное изображение на угол поворота главного контура
+cv2.imshow("rotate", rotimg) # показывает его
+roterode = rotate_image(img_erode, angle-90) # поворачивает изображение (img_erode) которое после преобразования
 
+# поиск контуров (contours - координаты точек контуров, hierarchy - иерархия)
 contours, hierarchy = cv2.findContours(roterode, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+# здесь преобразование беспорядочных точек контуров в отсортированые 4 точки углов каждой ячейки:
 n = 0
 ячейки = []
 for idx, contour in enumerate(contours):
@@ -147,8 +149,10 @@ for _ in таблицаТочек:
             #input()
             cv2.circle(rotimg,(int(___[0]),int(___[1])) , 2, (0,0,255), 2)
           
+# отображает строку по номеру
 показать_строку(таблицаТочек,6)
 
+# отображение номеров ячеек
 n = 1
 d = 1
 for _ in таблица:
@@ -162,7 +166,7 @@ for _ in таблица:
 
         
 
-
+# отображение всех изображений
 cv2.imshow("Input", img)
 cv2.imshow("gray", gray)
 cv2.imshow("thresh", thresh)
